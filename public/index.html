@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Panchang</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&family=Georgia&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <h1>Daily Panchang</h1>
+        <div id="clock"></div>
+        <div id="location"></div>
+        <div id="sunrise-sunset"></div>
+        <div class="input-group">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date">
+        </div>
+        <button onclick="calculateSelected()">Calculate</button>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showSection('rahu-kalam'); return false;">Rahu Kalam</a></li>
+                <li><a href="#" onclick="showSection('choghadiya'); return false;">Choghadiya</a></li>
+                <li><a href="#" onclick="showSection('hora'); return false;">Hora</a></li>
+                <li><a href="#" onclick="showSection('calendar'); return false;">Calendar</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content">
+        <div id="rahu-kalam-result" class="result-section hidden"></div>
+        <div id="choghadiya-result" class="result-section hidden"></div>
+        <div id="hora-result" class="result-section hidden"></div>
+        <div id="calendar-result" class="result-section hidden">
+            <div class="calendar-header">
+                <select id="month-selector">
+                    <option value="0">January</option><option value="1">February</option><option value="2">March</option>
+                    <option value="3">April</option><option value="4">May</option><option value="5">June</option>
+                    <option value="6">July</option><option value="7">August</option><option value="8">September</option>
+                    <option value="9">October</option><option value="10">November</option><option value="11">December</option>
+                </select>
+                <select id="year-selector">
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+            <div id="calendar-body"></div>
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+body {
+    background: url('/public/assets/kailash-mt-lg.jpeg') no-repeat center center fixed, linear-gradient(rgba(255, 215, 0, 0.2), rgba(255, 69, 0, 0.2));
+    background-size: cover;
+    color: #4B0082;
+    font-family: 'Georgia', serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    margin: 20px auto;
+    background: rgba(240, 240, 240, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar {
+    width: 300px;
+    padding: 30px;
+    background: rgba(255, 215, 0, 0.8);
+    border-right: 2px solid #8B0000;
+    text-align: center;
+    margin-top: 0;
+}
+
+.sidebar h1 {
+    color: #8B0000;
+    font-family: 'Noto Serif Devanagari', serif;
+    font-size: 2em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    position: relative;
+    padding-top: 80px;
+    line-height: 1.2;
+    background: rgba(255, 215, 0, 0.8);
+    display: inline-block;
+}
+
+.sidebar h1::before {
+    content: 'ॐ';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    font-size: 2.5em;
+    color: #FF4500;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#clock, #location, #sunrise-sunset {
+    margin: 10px 0;
+    color: #4B0082;
+    font-size: 1.1em;
+}
+
+.input-group {
+    margin: 20px 0;
+}
+
+label {
+    margin-right: 15px;
+    color: #4B0082;
+    font-weight: bold;
+}
+
+button {
+    padding: 12px 25px;
+    background-color: #FFD700;
+    color: #8B0000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #FF8C00;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+nav ul li {
+    margin: 10px 0;
+}
+
+nav ul li a {
+    color: #4B0082;
+    text-decoration: none;
+    font-family: 'Noto Serif Devanagari', serif;
+    font-size: 1.1em;
+    padding: 10px;
+    display: block;
+    border-radius: 5px;
+    background: rgba(255, 69, 0, 0.7);
+}
+
+nav ul li a:hover, nav ul li a.active {
+    background: #FFD700;
+    color: #8B0000;
+}
+
+.content {
+    flex: 1;
+    padding: 30px;
+    margin-top: 80px;
+    position: relative;
+}
+
+.result-section {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #8B0000;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    transition: background 0.3s ease;
+}
+
+#rahu-kalam-result:not(.hidden) {
+    background: rgba(255, 182, 193, 0.7);
+}
+
+#choghadiya-result:not(.hidden) {
+    background: rgba(144, 238, 144, 0.7);
+}
+
+#hora-result:not(.hidden) {
+    background: rgba(135, 206, 250, 0.7);
+}
+
+#calendar-result:not(.hidden) {
+    background: rgba(255, 215, 0, 0.7);
+}
+
+.hidden {
+    display: none;
+}
+
+.hora-table, .choghadiya-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.hora-table th, .hora-table td, .choghadiya-table th, .choghadiya-table td {
+    border: 1px solid #8B0000;
+    padding: 10px;
+}
+
+.hora-table th, .choghadiya-table th {
+    background-color: #FFD700;
+    color: #4B0082;
+}
+
+.good, .best {
+    background-color: #90EE90;
+}
+
+.gain {
+    background-color: #98FF98;
+}
+
+.neutral {
+    background-color: #FFFFE0;
+}
+
+.bad, .evil, .loss {
+    background-color: #FFB6C1;
+}
+
+h3, h4 {
+    color: #4B0082;
+    font-family: 'Noto Serif Devanagari', serif;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Style month/year dropdowns to look like buttons with arrows */
+#month-selector, #year-selector {
+    padding: 5px 20px 5px 10px; /* Extra padding on the right for the arrow */
+    background: #FFD700;
+    color: #4B0082;
+    border: 1px solid #8B0000;
+    border-radius: 5px;
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Custom arrow for dropdowns */
+#month-selector, #year-selector {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%238B0000" d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+}
+
+#calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.day-header {
+    background-color: #FFD700;
+    color: #4B0082;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.day {
+    padding: 10px;
+    border: 1px solid #8B0000;
+    background: rgba(255, 255, 255, 0.7);
+    position: relative;
+}
+
+.shukla {
+    background: rgba(245, 245, 220, 0.5);
+}
+
+.krishna {
+    background: rgba(173, 216, 230, 0.5);
+}
+
+.day.ekadashi {
+    border: 2px solid #FF4500;
+}
+
+.day.festival {
+    border: 2px dashed #FFD700;
+}
+
+.day.disabled {
+    background: #E0E0E0;
+    color: #A9A9A9;
+}
+
+.day .gregorian {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.day .vedic {
+    font-family: 'Noto Serif Devanagari', serif;
+    font-size: 0.9em;
+    color: #8B0000;
+}
+
+.day .nakshatra {
+    font-size: 0.8em;
+    color: #4B0082;
+}
+
+.day .moon-phase-graph {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 5px;
+    position: relative;
+    border: 1px solid #4B0082;
+    background: transparent; /* Default to transparent (no phase) */
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Moon phase styles */
+.day .moon-phase-graph.full-moon {
+    background: #FFFFFF;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.day .moon-phase-graph.new-moon {
+    background: #000000;
+}
+
+.day .festival-name {
+    font-size: 0.8em;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+/* Tooltip styles */
+.day .tooltip {
+    position: relative;
+    cursor: pointer;
+}
+
+.day .tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 10;
+}
+
+.day .tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Festival icons */
+.day .festival-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1em;
+    color: #FFD700;
+}
+
+/* Legend for Shukla/Krishna Paksha */
+.calendar-legend {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.7em;
+    color: #4B0082;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border: 1px solid #4B0082;
+    border-radius: 3px;
+}
+
+.legend-color.shukla {
+    background: rgba(245, 245, 220, 0.5);
+}
+
+.legend-color.krishna {
+    background: rgba(173, 216, 230, 0.5);
+}
