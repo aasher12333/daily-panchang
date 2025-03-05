@@ -1,151 +1,217 @@
-body {
-    background: url('/public/assets/kailash-mt-lg.jpeg') no-repeat center center fixed, linear-gradient(rgba(255, 215, 0, 0.2), rgba(255, 69, 0, 0.2));
-    background-size: cover;
-    color: #4B0082;
-    font-family: 'Georgia', serif;
+/* Reset and Base Styles */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #1A237E;
+    background: url('https://www.transparenttextures.com/patterns/mandala.png') repeat, linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
+    background-size: 200px 200px;
     min-height: 100vh;
 }
 
-.container {
-    max-width: 1200px;
-    width: 100%;
+/* Top Header */
+.top-header {
+    background: linear-gradient(to right, #FF9933, #1A237E);
+    color: #FFFFFF;
+    padding: 15px 20px;
     display: flex;
-    margin: 20px auto;
-    background: rgba(240, 240, 240, 0.9);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar {
-    width: 300px;
-    padding: 30px;
-    background: rgba(255, 215, 0, 0.8);
-    border-right: 2px solid #8B0000;
-    text-align: center;
-    margin-top: 0;
-}
-
-.sidebar h1 {
-    color: #8B0000;
-    font-family: 'Noto Serif Devanagari', serif;
-    font-size: 2em;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    position: relative;
-    padding-top: 80px;
-    line-height: 1.2;
-    background: rgba(255, 215, 0, 0.8);
-    display: inline-block;
-}
-
-.sidebar h1::before {
-    content: 'ॐ';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 0;
+.top-header h1 {
     font-size: 2.5em;
-    color: #FF4500;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-#clock, #location, #sunrise-sunset {
-    margin: 10px 0;
-    color: #4B0082;
-    font-size: 1.1em;
+.header-info {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9em;
+    align-items: center;
+    position: relative;
 }
 
-.input-group {
-    margin: 20px 0;
-}
-
-label {
-    margin-right: 15px;
-    color: #4B0082;
-    font-weight: bold;
-}
-
-button {
-    padding: 12px 25px;
-    background-color: #FFD700;
-    color: #8B0000;
+#change-location-btn {
+    padding: 5px 10px;
+    background: #FFD700;
+    color: #1A237E;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #FF8C00;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-}
-
-nav ul li {
-    margin: 10px 0;
-}
-
-nav ul li a {
-    color: #4B0082;
-    text-decoration: none;
-    font-family: 'Noto Serif Devanagari', serif;
-    font-size: 1.1em;
-    padding: 10px;
-    display: block;
-    border-radius: 5px;
-    background: rgba(255, 69, 0, 0.7);
-}
-
-nav ul li a:hover, nav ul li a.active {
-    background: #FFD700;
-    color: #8B0000;
-}
-
-.content {
-    flex: 1;
-    padding: 30px;
-    margin-top: 80px;
-    position: relative;
-}
-
-.result-section {
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #8B0000;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
     transition: background 0.3s ease;
+    width: auto; /* Fit the content */
 }
 
-#rahu-kalam-result:not(.hidden) {
-    background: rgba(255, 182, 193, 0.7);
+#change-location-btn:hover {
+    background: #FF9933;
 }
 
-#choghadiya-result:not(.hidden) {
-    background: rgba(144, 238, 144, 0.7);
+/* Location Input Form */
+.location-form {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
 }
 
-#hora-result:not(.hidden) {
-    background: rgba(135, 206, 250, 0.7);
-}
-
-#calendar-result:not(.hidden) {
-    background: rgba(255, 215, 0, 0.7);
-}
-
-.hidden {
+.location-form.hidden {
     display: none;
 }
 
+#city-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+/* Suggestions Dropdown */
+.suggestions {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 5px;
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+    background: #FFFFFF;
+}
+
+.suggestion-item {
+    padding: 8px;
+    cursor: pointer;
+    color: #1A237E; /* Ensure text is readable */
+    transition: background 0.3s ease;
+}
+
+.suggestion-item:hover {
+    background: #F0F0F0; /* Slightly darker background on hover */
+}
+
+/* Container */
+.container {
+    display: flex;
+    max-width: 1400px;
+    margin: 20px auto;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: linear-gradient(to bottom, #F5F5F5, #FFFFFF);
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.sidebar nav ul {
+    list-style: none;
+}
+
+.sidebar nav ul li {
+    margin: 15px 0;
+}
+
+.sidebar nav ul li a {
+    color: #1A237E;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.sidebar nav ul li a:hover, .sidebar nav ul li a.active {
+    background: #FF9933;
+    color: #FFFFFF;
+}
+
+#date {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9em;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #FFD700;
+    color: #1A237E;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #FF9933;
+}
+
+/* Hamburger Menu */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+    margin: 20px;
+}
+
+.hamburger-menu span {
+    width: 100%;
+    height: 3px;
+    background: #1A237E;
+    transition: all 0.3s ease;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    padding: 20px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Style for Sections */
+.card {
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
+}
+
+.card.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.card:not(.hidden) {
+    opacity: 1;
+}
+
+/* Tables */
 .hora-table, .choghadiya-table {
     width: 100%;
     border-collapse: collapse;
@@ -153,62 +219,67 @@ nav ul li a:hover, nav ul li a.active {
 }
 
 .hora-table th, .hora-table td, .choghadiya-table th, .choghadiya-table td {
-    border: 1px solid #8B0000;
+    border: 1px solid #E0E0E0;
     padding: 10px;
+    text-align: center;
 }
 
 .hora-table th, .choghadiya-table th {
-    background-color: #FFD700;
-    color: #4B0082;
+    background-color: #FF9933;
+    color: #FFFFFF;
+    font-weight: 500;
 }
 
 .good, .best {
-    background-color: #90EE90;
+    background-color: #4CAF50;
+    color: #FFFFFF;
 }
 
 .gain {
-    background-color: #98FF98;
+    background-color: #81C784;
+    color: #FFFFFF;
 }
 
 .neutral {
-    background-color: #FFFFE0;
+    background-color: #F5F5F5;
 }
 
 .bad, .evil, .loss {
-    background-color: #FFB6C1;
+    background-color: #F44336;
+    color: #FFFFFF;
 }
 
+/* Headings */
 h3, h4 {
-    color: #4B0082;
+    color: #1A237E;
     font-family: 'Noto Serif Devanagari', serif;
+    margin-bottom: 10px;
 }
 
+h3 {
+    font-size: 1.5em;
+}
+
+/* Calendar */
 .calendar-header {
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 10px;
     margin-bottom: 20px;
     position: relative;
 }
 
-/* Style month/year dropdowns to look like buttons with arrows */
 #month-selector, #year-selector {
-    padding: 5px 20px 5px 10px; /* Extra padding on the right for the arrow */
-    background: #FFD700;
-    color: #4B0082;
-    border: 1px solid #8B0000;
+    padding: 8px 25px 8px 10px;
+    background: #FF9933;
+    color: #FFFFFF;
+    border: none;
     border-radius: 5px;
-    appearance: none; /* Remove default dropdown arrow */
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    position: relative;
     cursor: pointer;
-}
-
-/* Custom arrow for dropdowns */
-#month-selector, #year-selector {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%238B0000" d="M7 10l5 5 5-5z"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 5px center;
 }
@@ -216,26 +287,34 @@ h3, h4 {
 #calendar-body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 10px;
     text-align: center;
 }
 
 .day-header {
-    background-color: #FFD700;
-    color: #4B0082;
+    background-color: #FF9933;
+    color: #FFFFFF;
     padding: 10px;
-    font-weight: bold;
+    font-weight: 500;
+    border-radius: 5px;
 }
 
 .day {
-    padding: 10px;
-    border: 1px solid #8B0000;
-    background: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border: 1px solid #E0E0E0;
+    background: #FFFFFF;
+    border-radius: 8px;
     position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .shukla {
-    background: rgba(245, 245, 220, 0.5);
+    background: rgba(255, 245, 220, 0.5);
 }
 
 .krishna {
@@ -243,7 +322,7 @@ h3, h4 {
 }
 
 .day.ekadashi {
-    border: 2px solid #FF4500;
+    border: 2px solid #FF9933;
 }
 
 .day.festival {
@@ -257,18 +336,18 @@ h3, h4 {
 
 .day .gregorian {
     font-size: 1.2em;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 .day .vedic {
     font-family: 'Noto Serif Devanagari', serif;
     font-size: 0.9em;
-    color: #8B0000;
+    color: #FF9933;
 }
 
 .day .nakshatra {
     font-size: 0.8em;
-    color: #4B0082;
+    color: #1A237E;
 }
 
 .day .moon-phase-graph {
@@ -278,13 +357,12 @@ h3, h4 {
     display: inline-block;
     margin-top: 5px;
     position: relative;
-    border: 1px solid #4B0082;
-    background: transparent; /* Default to transparent (no phase) */
+    border: 1px solid #1A237E;
+    background: transparent;
     overflow: hidden;
     box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
-/* Moon phase styles */
 .day .moon-phase-graph.full-moon {
     background: #FFFFFF;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
@@ -349,7 +427,7 @@ h3, h4 {
     flex-direction: column;
     gap: 5px;
     font-size: 0.7em;
-    color: #4B0082;
+    color: #1A237E;
     background: rgba(255, 255, 255, 0.8);
     padding: 5px;
     border-radius: 5px;
@@ -364,14 +442,81 @@ h3, h4 {
 .legend-color {
     width: 15px;
     height: 15px;
-    border: 1px solid #4B0082;
+    border: 1px solid #1A237E;
     border-radius: 3px;
 }
 
 .legend-color.shukla {
-    background: rgba(245, 245, 220, 0.5);
+    background: rgba(255, 245, 220, 0.5);
 }
 
 .legend-color.krishna {
     background: rgba(173, 216, 230, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .header-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .location-form {
+        width: 100%;
+        position: static;
+    }
+
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        height: 100%;
+        z-index: 1000;
+        transform: translateX(0);
+    }
+
+    .sidebar.active {
+        transform: translateX(250px);
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    #calendar-body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .day {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #calendar-body {
+        grid-template-columns: 1fr;
+    }
+
+    .day {
+        padding: 8px;
+    }
+
+    .day .gregorian {
+        font-size: 1em;
+    }
+
+    .day .vedic, .day .nakshatra {
+        font-size: 0.8em;
+    }
 }

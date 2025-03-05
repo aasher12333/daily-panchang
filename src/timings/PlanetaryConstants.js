@@ -32,13 +32,23 @@ const CHOGHADIYA_TYPES = {
 };
 
 const DAY_TO_CHOGHADIYA_INDEX = {
-    0: 5, // Sunday: Start with Jupiter (Shubha)
-    1: 4, // Monday: Start with Saturn (Kaal)
-    2: 6, // Tuesday: Start with Jupiter (Shubha)
-    3: 3, // Wednesday: Start with Moon (Amrita)
-    4: 2, // Thursday: Start with Sun (Udvega)
-    5: 1, // Friday: Start with Mercury (Labha)
-    6: 5  // Saturday: Start with Saturn (Kaal)
+    0: 1, // Sunday: Sun (Udveg)
+    1: 4, // Monday: Moon (Amrita)
+    2: 0, // Tuesday: Mars (Rog)
+    3: 3, // Wednesday: Mercury (Labha)
+    4: 6, // Thursday: Jupiter (Shubha)
+    5: 2, // Friday: Venus (Chara)
+    6: 5  // Saturday: Saturn (Kaal)
+};
+
+const NIGHT_CHOGHADIYA_SEQUENCE = {
+    0: [6, 4, 2, 0, 5, 3, 1, 6], // Sunday
+    1: [2, 0, 5, 3, 1, 6, 4, 2], // Monday
+    2: [5, 3, 1, 6, 4, 2, 0, 5], // Tuesday
+    3: [1, 6, 4, 2, 0, 5, 3, 1], // Wednesday
+    4: [4, 2, 0, 5, 3, 1, 6, 4], // Thursday
+    5: [0, 5, 3, 1, 6, 4, 2, 0], // Friday
+    6: [3, 1, 6, 4, 2, 0, 5, 3]  // Saturday
 };
 
 const RAHU_KALAM_PERIODS = {
@@ -71,18 +81,41 @@ const NAKSHATRAS = [
     'Uttara Bhadrapada', 'Revati'
 ];
 
-// Hardcoded festival data
+// Expanded festival data for 2025
 const FESTIVALS_2025 = {
-    "2025-01-02": "Vasant Panchami",
-    "2025-01-14": "Makar Sankranti",
-    "2025-01-26": "Republic Day",
-    "2025-02-25": "Maha Shivaratri",
+    // January
+    "2025-01-13": "Lohri",
+    "2025-01-14": "Makar Sankranti / Pongal / Thai Pongal",
+    "2025-01-29": "Vasant Panchami",
+
+    // February
+    "2025-02-26": "Maha Shivaratri",
+
+    // March
+    "2025-03-30": "Ugadi / Gudi Padwa",
+
+    // April
     "2025-04-08": "Rama Navami",
+    "2025-04-13": "Baisakhi",
+    "2025-04-14": "Bihu (Rongali Bihu)",
+
+    // August
     "2025-08-15": "Raksha Bandhan",
     "2025-08-23": "Krishna Janmashtami",
+    "2025-08-27": "Ganesh Chaturthi",
+    "2025-08-29": "Onam",
+
+    // September
     "2025-09-29": "Navratri Begins",
+
+    // October
     "2025-10-07": "Dussehra",
-    "2025-11-05": "Chhath Puja"
+    "2025-10-10": "Karva Chauth",
+    "2025-10-21": "Diwali", // Will be dynamically calculated, placeholder
+
+    // November
+    "2025-11-05": "Chhath Puja",
+    "2025-11-15": "Gurpurab (Guru Nanak Jayanti)",
 };
 
 module.exports = {
@@ -91,6 +124,7 @@ module.exports = {
     DAY_TO_HORA_INDEX,
     CHOGHADIYA_TYPES,
     DAY_TO_CHOGHADIYA_INDEX,
+    NIGHT_CHOGHADIYA_SEQUENCE,
     RAHU_KALAM_PERIODS,
     TITHI_NAMES,
     NAKSHATRAS,

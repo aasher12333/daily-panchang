@@ -5,43 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Panchang</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&family=Georgia&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Noto+Serif+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Add Moment.js and Moment Timezone via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+    <!-- Add tz-lookup via CDN -->
+    <script src="https://unpkg.com/tz-lookup@6.1.0/dist/tz-lookup.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="sidebar">
-        <h1>Daily Panchang</h1>
-        <div id="clock"></div>
-        <div id="location"></div>
-        <div id="sunrise-sunset"></div>
-        <div class="input-group">
-            <label for="date">Select Date:</label>
-            <input type="date" id="date">
+<header class="top-header">
+    <h1>Daily Panchang</h1>
+    <div class="header-info">
+        <div id="clock">Current Time: Loading...</div>
+        <div id="location">Location: Loading...</div>
+        <button id="change-location-btn">Change/Set Location</button>
+        <div id="location-input-container" class="location-form hidden">
+            <input type="text" id="city-input" placeholder="Type a city name (e.g., Mumbai)">
+            <div id="city-suggestions" class="suggestions"></div>
         </div>
-        <button onclick="calculateSelected()">Calculate</button>
+        <div id="sunrise-sunset">Sunrise/Sunset: Loading...</div>
+    </div>
+</header>
+<div class="container">
+    <div class="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="sidebar">
         <nav>
             <ul>
-                <li><a href="#" onclick="showSection('rahu-kalam'); return false;">Rahu Kalam</a></li>
-                <li><a href="#" onclick="showSection('choghadiya'); return false;">Choghadiya</a></li>
-                <li><a href="#" onclick="showSection('hora'); return false;">Hora</a></li>
-                <li><a href="#" onclick="showSection('calendar'); return false;">Calendar</a></li>
+                <li><a onclick="showSection('rahu-kalam')" class="active">Rahu Kalam</a></li>
+                <li><a onclick="showSection('choghadiya')">Choghadiya</a></li>
+                <li><a onclick="showSection('hora')">Hora</a></li>
+                <li><a onclick="showSection('calendar')">Calendar</a></li>
             </ul>
         </nav>
+        <input type="date" id="date">
     </div>
     <div class="content">
-        <div id="rahu-kalam-result" class="result-section hidden"></div>
-        <div id="choghadiya-result" class="result-section hidden"></div>
-        <div id="hora-result" class="result-section hidden"></div>
-        <div id="calendar-result" class="result-section hidden">
+        <div id="rahu-kalam-result" class="result-section card"></div>
+        <div id="choghadiya-result" class="result-section card hidden"></div>
+        <div id="hora-result" class="result-section card hidden"></div>
+        <div id="calendar-result" class="result-section card hidden">
             <div class="calendar-header">
                 <select id="month-selector">
-                    <option value="0">January</option><option value="1">February</option><option value="2">March</option>
-                    <option value="3">April</option><option value="4">May</option><option value="5">June</option>
-                    <option value="6">July</option><option value="7">August</option><option value="8">September</option>
-                    <option value="9">October</option><option value="10">November</option><option value="11">December</option>
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
                 </select>
                 <select id="year-selector">
+                    <option value="2024">2024</option>
                     <option value="2025">2025</option>
+                    <option value="2026">2026</option>
                 </select>
             </div>
             <div id="calendar-body"></div>
