@@ -4,44 +4,112 @@ const Astronomy = require('astronomy-engine');
 const { calculateRahuKalam, calculateHoras, calculateChoghadiya, getVedicData } = require('./vedicTimings');
 require('dotenv').config();
 
+// In-memory cache for sunrise/sunset data
+const sunriseSunsetCache = {};
+
 const app = express();
 app.use(express.static('public'));
 app.use(express.json());
+
+// Utility function for retrying API calls
+const retry = async (fn, retries = 3, delay = 1000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+};
 
 app.get('/api/rahu-kalam', async (req, res) => {
   try {
     const { lat, lng, date } = req.query;
 
+    // Validate query parameters
+    if (!lat || !lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
+      return res.status(400).json({ error: 'Invalid or missing latitude/longitude' });
+    }
+
     let calcDate;
     if (date) {
       const [year, month, day] = date.split('-').map(Number);
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD' });
+      }
       calcDate = new Date(year, month - 1, day);
     } else {
       calcDate = new Date();
     }
 
-    console.log('Server received date:', date, 'Calculated as:', calcDate.toISOString());
     const dayOfWeek = calcDate.getDay();
     const apiDate = calcDate.toISOString().split('T')[0];
 
-    const currentDayResponse = await axios.get(
-        `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${apiDate}&formatted=0`
-    );
+    // Define nextApiDate before using it in cacheKeyNext
     const nextDay = new Date(calcDate);
     nextDay.setDate(nextDay.getDate() + 1);
     const nextApiDate = nextDay.toISOString().split('T')[0];
-    const nextDayResponse = await axios.get(
-        `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${nextApiDate}&formatted=0`
+
+    // Now we can safely use nextApiDate in cacheKeyNext
+    const cacheKeyCurrent = `${lat}-${lng}-${apiDate}`;
+    const cacheKeyNext = `${lat}-${lng}-${nextApiDate}`;
+    let currentDayData = sunriseSunsetCache[cacheKeyCurrent];
+    let nextDayData = sunriseSunsetCache[cacheKeyNext];
+
+    // Fetch sunrise/sunset for the current day
+    if (!currentDayData) {
+      const currentDayResponse = await retry(() =>
+          axios.get(
+              `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${apiDate}&formatted=0`,
+              { timeout: 5000 }
+          )
+      );
+      currentDayData = currentDayResponse.data;
+      sunriseSunsetCache[cacheKeyCurrent] = currentDayData;
+    }
+
+    // Fetch sunrise/sunset for the next day
+    if (!nextDayData) {
+      const nextDayResponse = await retry(() =>
+          axios.get(
+              `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${nextApiDate}&formatted=0`,
+              { timeout: 5000 }
+          )
+      );
+      nextDayData = nextDayResponse.data;
+      sunriseSunsetCache[cacheKeyNext] = nextDayData;
+    }
+
+    // Validate API responses
+    if (!currentDayData.results || !currentDayData.results.sunrise || !currentDayData.results.sunset) {
+      throw new Error('Invalid sunrise/sunset data received for current day');
+    }
+    if (!nextDayData.results || !nextDayData.results.sunrise) {
+      throw new Error('Invalid sunrise/sunset data received for next day');
+    }
+
+    // Fetch location name (with delay to respect Nominatim rate limits)
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Respect Nominatim's 1 request/second limit
+    const locationResponse = await retry(() =>
+        axios.get(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+            {
+              timeout: 5000,
+              headers: { 'User-Agent': 'DailyPanchangApp/1.0 (asher.amish@gmail.com)' }
+            }
+        )
     );
 
-    const locationResponse = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-    );
-    const location = locationResponse.data.address.city || locationResponse.data.address.town || locationResponse.data.address.region || 'Unknown Location';
+    const location = locationResponse.data.address.city ||
+        locationResponse.data.address.town ||
+        locationResponse.data.address.region ||
+        'Unknown Location';
 
-    const { sunrise, sunset } = currentDayResponse.data.results;
-    const { sunrise: nextSunrise } = nextDayResponse.data.results;
+    const { sunrise, sunset } = currentDayData.results;
+    const { sunrise: nextSunrise } = nextDayData.results;
 
+    // Compute timings
     const rahuKalam = calculateRahuKalam(sunrise, sunset, dayOfWeek);
     const { dayHoras, nightHoras } = calculateHoras(sunrise, sunset, nextSunrise, dayOfWeek);
     const { dayChoghadiya, nightChoghadiya } = calculateChoghadiya(sunrise, sunset, nextSunrise, dayOfWeek);
@@ -59,7 +127,7 @@ app.get('/api/rahu-kalam', async (req, res) => {
       nightChoghadiya
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to calculate timings' });
+    res.status(500).json({ error: error.message || 'Failed to calculate timings' });
   }
 });
 

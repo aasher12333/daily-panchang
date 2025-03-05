@@ -4,17 +4,21 @@ const { TITHI_NAMES, NAKSHATRAS, FESTIVALS_2025 } = require('./PlanetaryConstant
 function calculatePakshaAndTithi(dateStr) {
     const date = new Date(dateStr);
 
+    // Validate date
+    if (isNaN(date.getTime())) {
+        throw new Error(`Invalid date string: ${dateStr}`);
+    }
+
     // Find the previous New Moon to determine lunar cycle position
     const newMoon = Astronomy.SearchMoonPhase(0, date, -30); // Previous New Moon (0°)
     if (!newMoon) {
-        console.error('Failed to find New Moon for date:', dateStr);
-        return { paksha: 'Shukla', tithi: 'Pratipada' }; // Fallback
+        throw new Error(`Failed to find New Moon for date: ${dateStr}`);
     }
 
     // Calculate days since the last New Moon
     const daysSinceNewMoon = (date - newMoon.date) / (1000 * 60 * 60 * 24);
     const synodicPeriod = 29.53059; // Average lunar cycle length in days
-    const lunarAge = (daysSinceNewMoon + 0.5) % synodicPeriod; // Add 0.5 days offset to align with reference
+    const lunarAge = (daysSinceNewMoon + 0.5) % synodicPeriod;
 
     // Paksha: Shukla (0 to 14.765 days), Krishna (14.765 to 29.53 days)
     const paksha = lunarAge < (synodicPeriod / 2) ? 'Shukla' : 'Krishna';
@@ -29,20 +33,39 @@ function calculatePakshaAndTithi(dateStr) {
 function calculateNakshatra(dateStr) {
     const date = new Date(dateStr);
 
+    // Validate date
+    if (isNaN(date.getTime())) {
+        throw new Error(`Invalid date string: ${dateStr}`);
+    }
+
     // Calculate the Moon's ecliptic longitude
     const geoMoon = Astronomy.GeoMoon(date);
+    if (!geoMoon) {
+        throw new Error(`Failed to calculate GeoMoon for date: ${dateStr}`);
+    }
+
     const ecliptic = Astronomy.Ecliptic(geoMoon);
-    let longitude = ecliptic.elon; // Ecliptic longitude in degrees
+    if (!ecliptic || typeof ecliptic.elon !== 'number') {
+        throw new Error(`Failed to calculate ecliptic longitude for date: ${dateStr}`);
+    }
+
+    let longitude = ecliptic.elon;
 
     // Normalize longitude to ensure it’s within 0° to 360°
     longitude = (longitude + 360) % 360;
 
     // Adjust longitude to match Vedic Nakshatra system
-    // Reference: March 1, 2025, should be Purva Bhadrapada → Uttara Bhadrapada
-    // October 7, 2025, should be Shravana
-    longitude = (longitude + 290) % 360; // Adjust offset to align with reference Nakshatras
+    longitude = (longitude + 290) % 360;
+
+    // Calculate Nakshatra index (27 Nakshatras, each 13.333° wide)
     const nakshatraIndex = Math.floor(longitude / (360 / 27));
-    return NAKSHATRAS[nakshatraIndex] || 'Unknown';
+
+    // Ensure the index is within bounds
+    if (nakshatraIndex < 0 || nakshatraIndex >= NAKSHATRAS.length) {
+        throw new Error(`Nakshatra index out of bounds: ${nakshatraIndex} for longitude ${longitude} on date ${dateStr}`);
+    }
+
+    return NAKSHATRAS[nakshatraIndex];
 }
 
 function calculateFestivals(dateStr, paksha, tithi) {

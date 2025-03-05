@@ -71,8 +71,17 @@ async function generateCalendar(month, year) {
 
             const dayDiv = document.createElement('div');
             dayDiv.className = 'day';
-            if (vedicInfo.paksha === 'Shukla') dayDiv.classList.add('shukla');
-            if (vedicInfo.paksha === 'Krishna') dayDiv.classList.add('krishna');
+
+            // Handle Paksha with a fallback
+            if (vedicInfo.paksha === 'Shukla') {
+                dayDiv.classList.add('shukla');
+            } else if (vedicInfo.paksha === 'Krishna') {
+                dayDiv.classList.add('krishna');
+            } else {
+                console.error(`Invalid Paksha value for ${dateStr}: ${vedicInfo.paksha}`);
+                dayDiv.classList.add('shukla'); // Fallback to Shukla if Paksha is invalid
+            }
+
             if (vedicInfo.isEkadashi) dayDiv.classList.add('ekadashi');
             if (festival) dayDiv.classList.add('festival');
 
@@ -117,17 +126,15 @@ async function calculateSelected() {
     const locationDiv = document.getElementById('location');
     const sunriseSunsetDiv = document.getElementById('sunrise-sunset');
 
-    console.log('Calculating for date from input:', dateInput);
-
     try {
         // Attempt to get location
         const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
         });
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
 
-        const { latitude, longitude } = position.coords;
         const query = `?lat=${latitude}&lng=${longitude}&date=${dateInput}`;
-        console.log('API Query:', query);
         const response = await fetch(`/api/rahu-kalam${query}`);
         const data = await response.json();
 
@@ -136,13 +143,11 @@ async function calculateSelected() {
         locationDiv.innerHTML = `Location: ${data.location}`;
         sunriseSunsetDiv.innerHTML = `Sunrise: ${new Date(data.sunrise).toLocaleTimeString([], { hour12: true, hour: 'numeric', minute: '2-digit' })} - Sunset: ${new Date(data.sunset).toLocaleTimeString([], { hour12: true, hour: 'numeric', minute: '2-digit' })}`;
 
-        console.log('Rahu Kalam Data:', data.rahuKalam);
         rahuKalamDiv.innerHTML = `
             <h3>${data.date} (${data.day})</h3>
             <p>Rahu Kalam: ${data.rahuKalam.start} - ${data.rahuKalam.end}</p>
         `;
 
-        console.log('Hora Data:', data.dayHoras, data.nightHoras);
         let horaHTML = '<h3>Hora Schedule</h3>';
         horaHTML += '<h4>Day Horas (Sunrise to Sunset)</h4><table class="hora-table">';
         horaHTML += '<tr><th>Time</th><th>Planet</th><th>Auspiciousness</th></tr>';
@@ -170,7 +175,6 @@ async function calculateSelected() {
         horaHTML += '</table>';
         horaDiv.innerHTML = horaHTML;
 
-        console.log('Choghadiya Data:', data.dayChoghadiya, data.nightChoghadiya);
         let choghadiyaHTML = '<h3>Choghadiya Schedule</h3>';
         choghadiyaHTML += '<h4>Day Choghadiya (Sunrise to Sunset)</h4><table class="choghadiya-table">';
         choghadiyaHTML += '<tr><th>Time</th><th>Name</th><th>Type</th><th>Special</th></tr>';
@@ -210,7 +214,8 @@ async function calculateSelected() {
         rahuKalamDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
         horaDiv.innerHTML = '';
         choghadiyaDiv.innerHTML = '';
-        locationDiv.innerHTML = '';
+        locationDiv.innerHTML = `<p style="color: red;">Failed to fetch location. Please enable geolocation and try again.</p>`;
+        locationDiv.innerHTML += `<br><button onclick="calculateSelected()">Retry</button>`;
         sunriseSunsetDiv.innerHTML = '';
     }
 }
@@ -229,10 +234,16 @@ document.getElementById('year-selector').addEventListener('change', () => {
 
 const today = new Date();
 document.getElementById('date').value = today.toISOString().split('T')[0];
-console.log('Default date set to:', document.getElementById('date').value);
 updateClock();
 setInterval(updateClock, 1000);
+
+// Load calendar for the current month immediately on page load
 window.onload = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    document.getElementById('month-selector').value = currentMonth;
+    document.getElementById('year-selector').value = currentYear;
+    generateCalendar(currentMonth, currentYear);
     calculateSelected();
-    generateCalendar(today.getMonth(), today.getFullYear());
 };
