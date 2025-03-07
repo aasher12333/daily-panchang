@@ -2,6 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const Astronomy = require('astronomy-engine');
 const { calculateRahuKalam, calculateHoras, calculateChoghadiya, getVedicData } = require('./vedicTimings');
+const tzLookup = require('tz-lookup');
+
 require('dotenv').config();
 
 const app = express();
@@ -95,6 +97,19 @@ app.get('/api/new-moon', async (req, res) => {
     res.json({ daysSinceNewMoon });
   } catch (error) {
     res.status(500).json({ error: 'Failed to calculate days since New Moon' });
+  }
+});
+
+app.get('/api/timezone', (req, res) => {
+  try {
+    const { lat, lng } = req.query;
+    if (!lat || !lng) {
+      return res.status(400).json({ error: 'Latitude and longitude are required.' });
+    }
+    const timezone = tzLookup(parseFloat(lat), parseFloat(lng));
+    res.json({ timezone });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to lookup timezone.' });
   }
 });
 

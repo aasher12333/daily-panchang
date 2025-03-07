@@ -1,7 +1,8 @@
-// Global variables to store the current location and timezone
 let currentLatitude = null;
 let currentLongitude = null;
 let currentTimezone = null;
+let targetTimezone = null;  // Add this
+
 
 function updateClock() {
     const clockDiv = document.getElementById('clock');
@@ -9,25 +10,22 @@ function updateClock() {
     clockDiv.innerHTML = `Current Time: ${now.format('h:mm:ss A')} (${currentTimezone || 'Local Time'})`;
 }
 
-function showSection(section) {
-    console.log(`Showing section: ${section}`);
-    document.getElementById('rahu-kalam-result').classList.add('hidden');
-    document.getElementById('choghadiya-result').classList.add('hidden');
-    document.getElementById('hora-result').classList.add('hidden');
-    document.getElementById('calendar-result').classList.add('hidden');
+async function fetchTimezone(latitude, longitude) {
+    const response = await fetch(`/api/timezone?lat=${latitude}&lng=${longitude}`);
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    return data.timezone;
+}
 
+function showSection(section) {
+    document.querySelectorAll('.result-section').forEach(div => div.classList.add('hidden'));
     document.getElementById(`${section}-result`).classList.remove('hidden');
 
-    const links = document.querySelectorAll('nav ul li a');
-    links.forEach(link => link.classList.remove('active'));
-    const activeLink = Array.from(links).find(link => link.getAttribute('onclick') === `showSection('${section}')`);
-    if (activeLink) {
-        activeLink.classList.add('active');
-    }
+    document.querySelectorAll('nav ul li a').forEach(link => link.classList.remove('active'));
+    const activeLink = document.querySelector(`nav ul li a[onclick="showSection('${section}')"]`);
+    if (activeLink) activeLink.classList.add('active');
 
-    // Close sidebar on mobile after selection
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.remove('active');
+    document.querySelector('.sidebar').classList.remove('active');
 }
 
 async function generateCalendar(month, year) {
@@ -60,7 +58,13 @@ async function generateCalendar(month, year) {
 
         for (let day = 1; day <= numDays; day++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const vedicInfo = vedicData[dateStr] || { tithi: 'Unknown', nakshatra: 'Unknown', paksha: 'Shukla', festival: '', isEkadashi: false };
+            const vedicInfo = vedicData[dateStr] || {
+                tithi: 'Unknown',
+                nakshatra: 'Unknown',
+                paksha: 'Shukla',
+                festival: '',
+                isEkadashi: false
+            };
             const festival = vedicInfo.festival || '';
 
             // Calculate lunar age for moon phase graphic
@@ -131,119 +135,108 @@ async function generateCalendar(month, year) {
 }
 
 async function calculateWithCoordinates(latitude, longitude, dateInput) {
-    console.log(`Calculating with coordinates: latitude=${latitude}, longitude=${longitude}, date=${dateInput}`);
-    currentLatitude = latitude;
-    currentLongitude = longitude;
-
-    // Use tz-lookup to determine the timezone from coordinates
     try {
-        currentTimezone = window.tzlookup(latitude, longitude); // e.g., "Asia/Kolkata"
-        console.log(`Determined timezone: ${currentTimezone}`);
-        // Validate that the timezone is a valid IANA timezone
-        if (!moment.tz.zone(currentTimezone)) {
-            throw new Error(`Invalid timezone: ${currentTimezone}`);
-        }
-    } catch (error) {
-        console.error('Error determining timezone, falling back to local timezone:', error);
-        currentTimezone = moment.tz.guess(); // Fallback to local timezone
-    }
+        currentLatitude = latitude;
+        currentLongitude = longitude;
+        currentTimezone = await fetchTimezone(latitude, longitude);
 
-    const rahuKalamDiv = document.getElementById('rahu-kalam-result');
-    const horaDiv = document.getElementById('hora-result');
-    const choghadiyaDiv = document.getElementById('choghadiya-result');
-    const locationDiv = document.getElementById('location');
-    const sunriseSunsetDiv = document.getElementById('sunrise-sunset');
+        const selectedDate = moment.tz(dateInput, currentTimezone).format('YYYY-MM-DD');
 
-    try {
-        const query = `?lat=${latitude}&lng=${longitude}&date=${dateInput}`;
-        const response = await fetch(`/api/rahu-kalam${query}`);
+        const rahuKalamDiv = document.getElementById('rahu-kalam-result');
+        const horaDiv = document.getElementById('hora-result');
+        const choghadiyaDiv = document.getElementById('choghadiya-result');
+        const locationDiv = document.getElementById('location');
+        const sunriseSunsetDiv = document.getElementById('sunrise-sunset');
+
+        rahuKalamDiv.innerHTML = `<p>Loading Rahu Kalam...</p>`;
+        horaDiv.innerHTML = `<p>Loading Hora...</p>`;
+        choghadiyaDiv.innerHTML = `<p>Loading Choghadiya...</p>`;
+
+        const response = await fetch(`/api/rahu-kalam?lat=${latitude}&lng=${longitude}&date=${selectedDate}`);
         const data = await response.json();
-
         if (data.error) throw new Error(data.error);
 
         locationDiv.innerHTML = `Location: ${data.location}`;
-
-        // Parse sunrise and sunset as UTC and localize to the selected timezone
-        console.log(`Raw sunrise: ${data.sunrise}, Raw sunset: ${data.sunset}`);
         const sunrise = moment.utc(data.sunrise).tz(currentTimezone);
         const sunset = moment.utc(data.sunset).tz(currentTimezone);
-        console.log(`Localized sunrise: ${sunrise.format('YYYY-MM-DD HH:mm:ss Z')}, Localized sunset: ${sunset.format('YYYY-MM-DD HH:mm:ss Z')}`);
         sunriseSunsetDiv.innerHTML = `Sunrise: ${sunrise.format('h:mm A')} - Sunset: ${sunset.format('h:mm A')}`;
 
-        // Localize Rahu Kalam times (parse as local time and adjust to timezone)
-        console.log(`Raw Rahu Kalam: ${data.rahuKalam.start} - ${data.rahuKalam.end}`);
-        const rahuStart = moment(data.rahuKalam.start, 'h:mm:ss A').tz(currentTimezone, true);
-        const rahuEnd = moment(data.rahuKalam.end, 'h:mm:ss A').tz(currentTimezone, true);
-        console.log(`Localized Rahu Kalam: ${rahuStart.format('YYYY-MM-DD HH:mm:ss Z')} - ${rahuEnd.format('YYYY-MM-DD HH:mm:ss Z')}`);
+        const rahuStart = moment.tz(`${selectedDate} ${data.rahuKalam.start}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+        const rahuEnd = moment.tz(`${selectedDate} ${data.rahuKalam.end}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
         rahuKalamDiv.innerHTML = `
-            <h3>${data.date} (${data.day})</h3>
-            <p>Rahu Kalam: ${rahuStart.format('h:mm A')} - ${rahuEnd.format('h:mm A')}</p>
+            <h3>${moment(selectedDate).format('dddd, MMM D YYYY')}</h3>
+            <p><strong>Rahu Kalam:</strong> ${rahuStart.format('h:mm A')} - ${rahuEnd.format('h:mm A')}</p>
         `;
 
-        // Localize Hora times
         let horaHTML = '<h3>Hora Schedule</h3>';
-        horaHTML += '<h4>Day Horas (Sunrise to Sunset)</h4><table class="hora-table">';
-        horaHTML += '<tr><th>Time</th><th>Planet</th><th>Auspiciousness</th></tr>';
-        data.dayHoras.forEach(hora => {
-            const start = moment(hora.start, 'h:mm:ss A').tz(currentTimezone, true);
-            const end = moment(hora.end, 'h:mm:ss A').tz(currentTimezone, true);
-            horaHTML += `
-                <tr class="${hora.auspiciousness?.toLowerCase() || 'neutral'}">
-                    <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
-                    <td>${hora.planet || 'Unknown'}</td>
-                    <td>${hora.auspiciousness || 'Neutral'}</td>
-                </tr>
-            `;
-        });
-        horaHTML += '</table>';
-        horaHTML += '<h4>Night Horas (Sunset to Next Sunrise)</h4><table class="hora-table">';
-        horaHTML += '<tr><th>Time</th><th>Planet</th><th>Auspiciousness</th></tr>';
-        data.nightHoras.forEach(hora => {
-            const start = moment(hora.start, 'h:mm:ss A').tz(currentTimezone, true);
-            const end = moment(hora.end, 'h:mm:ss A').tz(currentTimezone, true);
-            horaHTML += `
-                <tr class="${hora.auspiciousness?.toLowerCase() || 'neutral'}">
-                    <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
-                    <td>${hora.planet || 'Unknown'}</td>
-                    <td>${hora.auspiciousness || 'Neutral'}</td>
-                </tr>
-            `;
-        });
-        horaHTML += '</table>';
+        for (const period of ['dayHoras', 'nightHoras']) {
+            horaHTML += `<h4>${period === 'dayHoras' ? 'Day Horas (Sunrise to Sunset)' : 'Night Horas (Sunset to Sunrise)'}</h4>
+                         <table class="hora-table">
+                         <tr><th>Time</th><th>Planet</th><th>Auspiciousness</th></tr>`;
+            data[period].forEach(hora => {
+                const start = moment.tz(`${selectedDate} ${hora.start}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+                const end = moment.tz(`${selectedDate} ${hora.end}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+                horaHTML += `<tr class="${hora.auspiciousness?.toLowerCase()}">
+                                <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
+                                <td>${hora.planet}</td>
+                                <td>${hora.auspiciousness}</td>
+                             </tr>`;
+            });
+            horaHTML += '</table>';
+        }
         horaDiv.innerHTML = horaHTML;
 
-        // Localize Choghadiya times
-        let choghadiyaHTML = '<h3>Choghadiya Schedule</h3>';
-        choghadiyaHTML += '<h4>Day Choghadiya (Sunrise to Sunset)</h4><table class="choghadiya-table">';
-        choghadiyaHTML += '<tr><th>Time</th><th>Name</th><th>Type</th><th>Special</th></tr>';
+        const now = moment().tz(currentTimezone);
+        let choghadiyaHTML = `
+    <h3>Choghadiya Schedule</h3>
+    <div class="choghadiya-wrapper">
+        <div class="choghadiya-section">
+            <h4>Day Choghadiya</h4>
+            <table class="choghadiya-table">
+                <tr><th style="width: 25%;">Time</th><th>Name</th><th>Type</th></tr>`;
+
         data.dayChoghadiya.forEach(chog => {
-            const start = moment(chog.start, 'h:mm:ss A').tz(currentTimezone, true);
-            const end = moment(chog.end, 'h:mm:ss A').tz(currentTimezone, true);
+            const start = moment.tz(`${selectedDate} ${chog.start}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+            const end = moment.tz(`${selectedDate} ${chog.end}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+            const isCurrent = now.isBetween(start, end);
+
+            const special = chog.special ? ` (${chog.special})` : '';
             choghadiyaHTML += `
-                <tr class="${chog.type?.toLowerCase() || 'neutral'}">
-                    <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
-                    <td>${chog.name || 'Unknown'}</td>
-                    <td>${chog.type || 'Neutral'}</td>
-                    <td>${chog.special || ''}</td>
-                </tr>
-            `;
+        <tr class="${chog.name.trim().toLowerCase()}${isCurrent ? ' current-choghadiya' : ''}">
+            <td>${chog.start} - ${chog.end}</td>
+            <td>${chog.type}</td>
+        </tr>`;
         });
-        choghadiyaHTML += '</table>';
-        choghadiyaHTML += '<h4>Night Choghadiya (Sunset to Next Sunrise)</h4><table class="choghadiya-table">';
-        choghadiyaHTML += '<tr><th>Time</th><th>Name</th><th>Type</th><th>Special</th></tr>';
-        data.nightChoghadiya.forEach(chog => {
-            const start = moment(chog.start, 'h:mm:ss A').tz(currentTimezone, true);
-            const end = moment(chog.end, 'h:mm:ss A').tz(currentTimezone, true);
+
+        choghadiyaHTML += `
+            </table>
+        </div>
+        <div class="choghadiya-section">
+            <h4>Night Choghadiya</h4>
+            <table class="choghadiya-table">
+                <tr><th style="width: 25%;">Time</th><th>Name</th><th>Type</th></tr>`;
+
+        let nightDate = moment(selectedDate).clone();
+        data.nightChoghadiya.forEach((chog, index) => {
+            if (index && moment(chog.start, 'h:mm:ss A').hour() < 12) nightDate.add(1, 'day');
+
+            const start = moment.tz(`${nightDate.format('YYYY-MM-DD')} ${chog.start}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+            const end = moment.tz(`${nightDate.format('YYYY-MM-DD')} ${chog.end}`, 'YYYY-MM-DD h:mm:ss A', currentTimezone);
+            const isCurrent = now.isBetween(start, end);
+
+            const special = chog.special ? ` (${chog.special})` : '';
             choghadiyaHTML += `
-                <tr class="${chog.type?.toLowerCase() || 'neutral'}">
-                    <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
-                    <td>${chog.name || 'Unknown'}</td>
-                    <td>${chog.type || 'Neutral'}</td>
-                    <td>${chog.special || ''}</td>
-                </tr>
-            `;
+        <tr class="${chog.name.trim().toLowerCase()}${isCurrent ? ' current-choghadiya' : ''}">
+            <td>${chog.start} - ${chog.end}</td>
+            <td>${chog.type}</td>
+        </tr>`;
         });
-        choghadiyaHTML += '</table>';
+
+        choghadiyaHTML += `
+            </table>
+        </div>
+    </div>`;
+
         choghadiyaDiv.innerHTML = choghadiyaHTML;
 
         const [year, month] = dateInput.split('-').map(Number);
@@ -253,17 +246,16 @@ async function calculateWithCoordinates(latitude, longitude, dateInput) {
 
         showSection('rahu-kalam');
     } catch (error) {
-        console.error('Error in calculateWithCoordinates:', error);
-        rahuKalamDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-        horaDiv.innerHTML = '';
-        choghadiyaDiv.innerHTML = '';
-        locationDiv.innerHTML = `<p style="color: red;">Failed to fetch location data: ${error.message}</p>`;
-        sunriseSunsetDiv.innerHTML = '';
+        console.error('Error:', error);
+        document.getElementById('rahu-kalam-result').innerHTML = `<p style="color: red;">Error loading Rahu Kalam: ${error.message}</p>`;
+        document.getElementById('hora-result').innerHTML = '';
+        document.getElementById('choghadiya-result').innerHTML = '';
+        document.getElementById('location').innerHTML = `<p style="color: red;">Failed to fetch location data: ${error.message}</p>`;
+        document.getElementById('sunrise-sunset').innerHTML = '';
     }
 }
 
 async function calculateSelected() {
-    console.log('Starting calculateSelected');
     const dateInput = document.getElementById('date').value;
     const locationDiv = document.getElementById('location');
     const locationInputContainer = document.getElementById('location-input-container');
@@ -271,29 +263,22 @@ async function calculateSelected() {
     locationDiv.innerHTML = `Location: Loading...`;
 
     try {
-        console.log('Requesting geolocation...');
-        // Attempt to get location with a timeout
         const position = await new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => {
-                reject(new Error('Geolocation request timed out'));
-            }, 10000);
-
+            const timeoutId = setTimeout(() => reject(new Error('Geolocation timed out')), 10000);
             navigator.geolocation.getCurrentPosition(
-                position => {
+                pos => {
                     clearTimeout(timeoutId);
-                    resolve(position);
+                    resolve(pos);
                 },
-                error => {
+                err => {
                     clearTimeout(timeoutId);
-                    reject(error);
+                    reject(err);
                 },
-                { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
+                {timeout: 10000, maximumAge: 0, enableHighAccuracy: true}
             );
         });
-        console.log('Geolocation successful:', position);
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
 
+        const {latitude, longitude} = position.coords;
         locationInputContainer.classList.add('hidden');
         await calculateWithCoordinates(latitude, longitude, dateInput);
     } catch (error) {

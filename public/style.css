@@ -8,10 +8,20 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: #1A237E;
-    background: url('https://www.transparenttextures.com/patterns/mandala.png') repeat, linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
-    background-size: 200px 200px;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
+
+    background-image:
+            linear-gradient(135deg, #FFF7E0, #FFE0B2),
+            url('/assets/mandala-background.jpg');
+    background-repeat: no-repeat, no-repeat;
+    background-position: center center, center center;
+    background-size: cover, 100%; /* Gradient covers full, mandala is 30% of body */
+    background-attachment: scroll, scroll;
+    background-blend-mode: soft-light;
 }
+
 
 /* Top Header */
 .top-header {
@@ -218,35 +228,96 @@ button:hover {
     margin-top: 15px;
 }
 
-.hora-table th, .hora-table td, .choghadiya-table th, .choghadiya-table td {
+/* Choghadiya table adjustments */
+.choghadiya-table th, .choghadiya-table td {
     border: 1px solid #E0E0E0;
     padding: 10px;
     text-align: center;
 }
 
-.hora-table th, .choghadiya-table th {
-    background-color: #FF9933;
-    color: #FFFFFF;
-    font-weight: 500;
+/* Narrow down Time column */
+.choghadiya-table th:nth-child(1),
+.choghadiya-table td:nth-child(1) {
+    width: 50%;
 }
 
-.good, .best {
-    background-color: #4CAF50;
-    color: #FFFFFF;
+/* Consistent width for Name and Type */
+.choghadiya-table th:nth-child(2),
+.choghadiya-table td:nth-child(2) {
+    width: 22%;
 }
 
-.gain {
-    background-color: #81C784;
-    color: #FFFFFF;
+.choghadiya-table th:nth-child(3),
+.choghadiya-table td:nth-child(3) {
+    width: 28%;
 }
 
-.neutral {
-    background-color: #F5F5F5;
+/* Pastel theme for background contrast */
+.choghadiya-wrapper {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.bad, .evil, .loss {
-    background-color: #F44336;
-    color: #FFFFFF;
+/* Mobile stacking */
+@media (max-width: 768px) {
+    .choghadiya-wrapper {
+        flex-direction: column;
+    }
+}
+
+/* Color coding by Choghadiya name */
+/* GOOD - Green shades */
+/*tr.amrita { background-color: #66BB6A; color: #fff; } !* Deep green *!*/
+tr.shubha, tr.amrita, tr.labha { background-color: #81C784; color: #fff; } /* Mid green */
+/*tr.labha { background-color: #A5D6A7; color: #fff; } !* Light green *!*/
+
+/* NEUTRAL - Light grey */
+tr.chara { background-color: #F5F5F5; color: #333; }
+
+/* BAD - Red shades */
+/*tr.udveg { background-color: #D32F2F; color: #fff; } !* Deep red *!*/
+tr.kaal, tr.udveg, tr.rog { background-color: #E57373; color: #fff; } /* Mid red */
+/*tr.rog { background-color: #FFCDD2; color: #fff; } !* Light red *!*/
+
+/* Highlight for current Choghadiya */
+tr.current-choghadiya {
+    animation: flash 1.5s infinite;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.8); /* Soft yellow glow */
+    border: 2px solid #FFC107;
+}
+
+@keyframes flash {
+    0% { background-color: rgba(255, 249, 196, 0.8); }
+    50% { background-color: rgba(255, 236, 154, 0.9); }
+    100% { background-color: rgba(255, 249, 196, 0.8); }
+}
+
+ /*Table contrast */
+.result-section {
+    background-color: #D3D3D3; /* pastel peach */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove "Special" column styles completely */
+.choghadiya-table th:nth-child(4),
+.choghadiya-table td:nth-child(4) {
+    display: none;
+}
+
+/* Layout */
+.choghadiya-wrapper {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.choghadiya-section {
+    flex: 1;
+    min-width: 300px;
 }
 
 /* Headings */
