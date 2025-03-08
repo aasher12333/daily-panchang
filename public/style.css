@@ -22,7 +22,6 @@ body {
     background-blend-mode: soft-light;
 }
 
-
 /* Top Header */
 .top-header {
     background: linear-gradient(to right, #FF9933, #1A237E);
@@ -252,13 +251,14 @@ button:hover {
     width: 28%;
 }
 
-/* Pastel theme for background contrast */
+/* Warm theme with light peach tone */
 .choghadiya-wrapper {
     display: flex;
     gap: 20px;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: #F5F5F5; /* Light Peach */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Mobile stacking */
@@ -268,36 +268,35 @@ button:hover {
     }
 }
 
-/* Color coding by Choghadiya name */
-/* GOOD - Green shades */
-/*tr.amrita { background-color: #66BB6A; color: #fff; } !* Deep green *!*/
-tr.shubha, tr.amrita, tr.labha { background-color: #81C784; color: #fff; } /* Mid green */
-/*tr.labha { background-color: #A5D6A7; color: #fff; } !* Light green *!*/
+/* Color coding by Choghadiya type (updated to match server response) */
+/* GOOD - Green shades (for "Good", "Gain", "Best") */
+tr.good { background-color: #81C784; color: #fff; } /* Mid green */
+tr.gain { background-color: #81C784; color: #fff; } /* Mid green */
+tr.best { background-color: #81C784; color: #fff; } /* Mid green */
 
-/* NEUTRAL - Light grey */
-tr.chara { background-color: #F5F5F5; color: #333; }
+/* NEUTRAL - Warm peach instead of grey */
+tr.neutral { background-color: #FFE5B4; color: #333; } /* Warm peach replacing #F5F5F5 */
 
-/* BAD - Red shades */
-/*tr.udveg { background-color: #D32F2F; color: #fff; } !* Deep red *!*/
-tr.kaal, tr.udveg, tr.rog { background-color: #E57373; color: #fff; } /* Mid red */
-/*tr.rog { background-color: #FFCDD2; color: #fff; } !* Light red *!*/
+/* BAD - Red shades (for "Bad", "Evil", "Loss") */
+tr.bad { background-color: #E57373; color: #fff; } /* Mid red */
+tr.evil { background-color: #E57373; color: #fff; } /* Mid red */
+tr.loss { background-color: #E57373; color: #fff; } /* Mid red */
 
 /* Highlight for current Choghadiya */
 tr.current-choghadiya {
-    animation: flash 1.5s infinite;
-    box-shadow: 0 0 10px rgba(255, 193, 7, 0.8); /* Soft yellow glow */
-    border: 2px solid #FFC107;
+    animation: glow 1.5s infinite;
+    border: 2px solid #FFC107; /* Yellow border to indicate current row */
 }
 
-@keyframes flash {
-    0% { background-color: rgba(255, 249, 196, 0.8); }
-    50% { background-color: rgba(255, 236, 154, 0.9); }
-    100% { background-color: rgba(255, 249, 196, 0.8); }
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.9); }
+    100% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.5); }
 }
 
- /*Table contrast */
+/* Update table contrast with warm peach */
 .result-section {
-    background-color: #D3D3D3; /* pastel peach */
+    background-color: #FFE5B4; /* Warm peach replacing #D3D3D3 */
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -342,7 +341,6 @@ h3 {
 
 #month-selector, #year-selector {
     padding: 8px 25px 8px 10px;
-    background: #FF9933;
     color: #FFFFFF;
     border: none;
     border-radius: 5px;
@@ -350,9 +348,7 @@ h3 {
     -webkit-appearance: none;
     -moz-appearance: none;
     cursor: pointer;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M7 10l5 5 5-5z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 5px center;
+    background: #FF9933 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
 }
 
 #calendar-body {

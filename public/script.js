@@ -202,9 +202,10 @@ async function calculateWithCoordinates(latitude, longitude, dateInput) {
 
             const special = chog.special ? ` (${chog.special})` : '';
             choghadiyaHTML += `
-        <tr class="${chog.name.trim().toLowerCase()}${isCurrent ? ' current-choghadiya' : ''}">
-            <td>${chog.start} - ${chog.end}</td>
-            <td>${chog.type}</td>
+        <tr class="${chog.type?.toLowerCase() || 'neutral'}${isCurrent ? ' current-choghadiya' : ''}">
+            <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
+            <td>${chog.name || 'Unknown'}</td>
+            <td>${chog.type || 'Neutral'}</td>
         </tr>`;
         });
 
@@ -226,9 +227,10 @@ async function calculateWithCoordinates(latitude, longitude, dateInput) {
 
             const special = chog.special ? ` (${chog.special})` : '';
             choghadiyaHTML += `
-        <tr class="${chog.name.trim().toLowerCase()}${isCurrent ? ' current-choghadiya' : ''}">
-            <td>${chog.start} - ${chog.end}</td>
-            <td>${chog.type}</td>
+        <tr class="${chog.type?.toLowerCase() || 'neutral'}${isCurrent ? ' current-choghadiya' : ''}">
+            <td>${start.format('h:mm A')} - ${end.format('h:mm A')}</td>
+            <td>${chog.name || 'Unknown'}</td>
+            <td>${chog.type || 'Neutral'}</td>
         </tr>`;
         });
 
@@ -254,7 +256,6 @@ async function calculateWithCoordinates(latitude, longitude, dateInput) {
         document.getElementById('sunrise-sunset').innerHTML = '';
     }
 }
-
 async function calculateSelected() {
     const dateInput = document.getElementById('date').value;
     const locationDiv = document.getElementById('location');
