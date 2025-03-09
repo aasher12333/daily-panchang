@@ -1,0 +1,130 @@
+/* Content */
+.content {
+    flex: 1;
+    padding: 20px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Style for Sections */
+.card {
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
+}
+
+.card.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.card:not(.hidden) {
+    opacity: 1;
+}
+
+/* Tables */
+.hora-table, .choghadiya-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+/* Choghadiya table adjustments */
+.choghadiya-table th, .choghadiya-table td {
+    border: 1px solid #E0E0E0;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Narrow down Time column */
+.choghadiya-table th:nth-child(1),
+.choghadiya-table td:nth-child(1) {
+    width: 50%;
+}
+
+/* Consistent width for Name and Type */
+.choghadiya-table th:nth-child(2),
+.choghadiya-table td:nth-child(2) {
+    width: 22%;
+}
+
+.choghadiya-table th:nth-child(3),
+.choghadiya-table td:nth-child(3) {
+    width: 28%;
+}
+
+/* Warm theme with light gray tone */
+.choghadiya-wrapper {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #F5F5F5; /* Light gray */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Color coding by Choghadiya type (updated to match server response) */
+/* GOOD - Green shades (for "Good", "Gain", "Best") */
+tr.good { background-color: #81C784; color: #fff; } /* Mid green */
+tr.gain { background-color: #81C784; color: #fff; } /* Mid green */
+tr.best { background-color: #81C784; color: #fff; } /* Mid green */
+
+/* NEUTRAL - Warm peach instead of grey */
+tr.neutral { background-color: #FFE5B4; color: #333; } /* Warm peach replacing #F5F5F5 */
+
+/* BAD - Red shades (for "Bad", "Evil", "Loss") */
+tr.bad { background-color: #E57373; color: #fff; } /* Mid red */
+tr.evil { background-color: #E57373; color: #fff; } /* Mid red */
+tr.loss { background-color: #E57373; color: #fff; } /* Mid red */
+
+/* Highlight for current Choghadiya */
+tr.current-choghadiya {
+    animation: glow 1.5s infinite;
+    border: 2px solid #FFC107; /* Yellow border to indicate current row */
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.9); }
+    100% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.5); }
+}
+
+/* Update table contrast with warm peach */
+.result-section {
+    background-color: #FFE5B4; /* Warm peach replacing #D3D3D3 */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove "Special" column styles completely */
+.choghadiya-table th:nth-child(4),
+.choghadiya-table td:nth-child(4) {
+    display: none;
+}
+
+/* Layout */
+.choghadiya-wrapper {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.choghadiya-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Headings */
+h3, h4 {
+    color: #1A237E;
+    font-family: 'Noto Serif Devanagari', serif;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 1.5em;
+}

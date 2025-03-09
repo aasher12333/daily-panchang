@@ -1,0 +1,172 @@
+/* Responsive Design */
+@media (max-width: 768px) {
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px;
+        position: relative;
+    }
+
+    .header-title {
+        margin: 0 auto; /* Center the title */
+        width: 100%; /* Ensure full width for centering */
+        text-align: center; /* Center text */
+        padding-left: 50px; /* Offset for hamburger menu */
+        padding-right: 50px; /* Balance padding */
+        box-sizing: border-box;
+    }
+
+    .top-header h1 {
+        font-size: clamp(1.5em, 4vw, 2.5em);
+        margin: 0;
+    }
+
+    .hamburger-menu {
+        display: flex;
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 40px;
+        height: 40px;
+        z-index: 1001;
+    }
+
+    .hamburger-menu span {
+        width: 100%;
+        height: 4px;
+        background: #1A237E;
+        transition: all 0.3s ease;
+        margin: 4px 0;
+    }
+
+    .header-info {
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .header-info div {
+        font-size: 0.8em;
+    }
+
+    #change-location-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        height: 100%;
+        z-index: 1000;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(250px);
+    }
+
+    /* Hide Calendar link in mobile view */
+    .sidebar nav ul li a[data-section="calendar"] {
+        display: none;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 15px;
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
+    /* Hide Calendar section in mobile view */
+    #calendar-result {
+        display: none;
+    }
+
+    #calendar-body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .day {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    /* Scrollable Table Layout */
+    .choghadiya-table, .hora-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+        font-size: 0.9em; /* Slightly larger font for readability */
+    }
+
+    .choghadiya-table th, .choghadiya-table td {
+        border: 1px solid #E0E0E0;
+        padding: 8px;
+        text-align: center;
+        min-width: 80px; /* Ensure columns don't collapse too much */
+    }
+
+    .choghadiya-table th {
+        background-color: #FF9933;
+        color: #FFFFFF;
+        font-weight: 500;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .choghadiya-wrapper {
+        flex-direction: column;
+        padding: 10px;
+        overflow-x: auto;
+    }
+
+    .choghadiya-section {
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    #calendar-body {
+        grid-template-columns: 1fr;
+    }
+
+    .day {
+        padding: 8px;
+        font-size: 0.8em;
+    }
+
+    .day .gregorian {
+        font-size: 1em;
+    }
+
+    .day .vedic, .day .nakshatra {
+        font-size: 0.7em;
+    }
+
+    .top-header h1 {
+        font-size: clamp(1.2em, 4vw, 1.8em);
+    }
+
+    .header-info div {
+        font-size: 0.7em;
+    }
+
+    #change-location-btn {
+        padding: 8px 16px;
+    }
+
+    .choghadiya-table, .hora-table {
+        font-size: 0.8em;
+    }
+
+    .choghadiya-table th, .choghadiya-table td {
+        padding: 6px;
+        min-width: 70px;
+    }
+}

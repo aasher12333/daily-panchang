@@ -1,0 +1,190 @@
+/* Calendar */
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#month-selector, #year-selector {
+    padding: 8px 25px 8px 10px;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background: #FF9933 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
+}
+
+#calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.day-header {
+    background-color: #FF9933;
+    color: #FFFFFF;
+    padding: 10px;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+.day {
+    padding: 15px;
+    border: 1px solid #E0E0E0;
+    background: #FFFFFF;
+    border-radius: 8px;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.shukla {
+    background: rgba(255, 245, 220, 0.5);
+}
+
+.krishna {
+    background: rgba(173, 216, 230, 0.5);
+}
+
+.day.ekadashi {
+    border: 2px solid #FF9933;
+}
+
+.day.festival {
+    border: 2px dashed #FFD700;
+}
+
+.day.disabled {
+    background: #E0E0E0;
+    color: #A9A9A9;
+}
+
+.day .gregorian {
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.day .vedic {
+    font-family: 'Noto Serif Devanagari', serif;
+    font-size: 0.9em;
+    color: #FF9933;
+}
+
+.day .nakshatra {
+    font-size: 0.8em;
+    color: #1A237E;
+}
+
+.day .moon-phase-graph {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 5px;
+    position: relative;
+    border: 1px solid #1A237E;
+    background: transparent;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+.day .moon-phase-graph.full-moon {
+    background: #FFFFFF;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.day .moon-phase-graph.new-moon {
+    background: #000000;
+}
+
+.day .festival-name {
+    font-size: 0.8em;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+/* Tooltip styles */
+.day .tooltip {
+    position: relative;
+    cursor: pointer;
+}
+
+.day .tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 10;
+}
+
+.day .tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Festival icons */
+.day .festival-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1em;
+    color: #FFD700;
+}
+
+/* Legend for Shukla/Krishna Paksha */
+.calendar-legend {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.7em;
+    color: #1A237E;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border: 1px solid #1A237E;
+    border-radius: 3px;
+}
+
+.legend-color.shukla {
+    background: rgba(255, 245, 220, 0.5);
+}
+
+.legend-color.krishna {
+    background: rgba(173, 216, 230, 0.5);
+}

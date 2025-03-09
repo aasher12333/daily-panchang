@@ -4,15 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Panchang</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Load CSS files from /css directory -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/content.css">
+    <link rel="stylesheet" href="/css/calendar.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Google Fonts for Poppins and Noto Serif Devanagari -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Noto+Serif+Devanagari:wght@400;700&display=swap" rel="stylesheet">
     <!-- Moment.js and Moment Timezone -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
 </head>
 <body>
+<!-- Top Header -->
 <header class="top-header">
-    <h1>Daily Panchang</h1>
+    <div class="header-title">
+        <h1>Daily Panchang</h1>
+    </div>
+    <div class="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
     <div class="header-info">
         <div id="clock">Current Time: Loading...</div>
         <div id="location">Location: Loading...</div>
@@ -24,27 +39,34 @@
         <div id="sunrise-sunset">Sunrise/Sunset: Loading...</div>
     </div>
 </header>
+
+<!-- Main Container -->
 <div class="container">
-    <div class="hamburger-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+    <!-- Sidebar -->
     <div class="sidebar">
         <nav>
             <ul>
-                <li><a onclick="showSection('rahu-kalam')" class="active">Rahu Kalam</a></li>
-                <li><a onclick="showSection('choghadiya')">Choghadiya</a></li>
-                <li><a onclick="showSection('hora')">Hora</a></li>
-                <li><a onclick="showSection('calendar')">Calendar</a></li>
+                <li><a href="#" data-section="rahu-kalam" class="active">Rahu Kalam</a></li>
+                <li><a href="#" data-section="choghadiya">Choghadiya</a></li>
+                <li><a href="#" data-section="hora">Hora</a></li>
+                <li><a href="#" data-section="calendar">Calendar</a></li>
             </ul>
         </nav>
         <input type="date" id="date">
     </div>
+
+    <!-- Main Content -->
     <div class="content">
+        <!-- Rahu Kalam Section -->
         <div id="rahu-kalam-result" class="result-section card"></div>
+
+        <!-- Choghadiya Section -->
         <div id="choghadiya-result" class="result-section card hidden"></div>
+
+        <!-- Hora Section -->
         <div id="hora-result" class="result-section card hidden"></div>
+
+        <!-- Calendar Section -->
         <div id="calendar-result" class="result-section card hidden">
             <div class="calendar-header">
                 <select id="month-selector">
@@ -71,6 +93,8 @@
         </div>
     </div>
 </div>
-<script src="script.js"></script>
+
+<!-- Load JavaScript as ES6 Module -->
+<script type="module" src="/js/main.js"></script>
 </body>
 </html>
